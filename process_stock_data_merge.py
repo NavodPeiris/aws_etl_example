@@ -12,22 +12,22 @@ spark = SparkSession.builder \
 
 
 schema = StructType([
-   StructField("Date", StringType(), True),
-   StructField("Open", FloatType(), True),
-   StructField("High", FloatType(), True),
-   StructField("Low", FloatType(), True),
-   StructField("Close", FloatType(), True),
-   StructField("AdjClose", FloatType(), True),
-   StructField("Volume", IntegerType(), True)])
+   StructField("date", StringType(), True),
+   StructField("open", FloatType(), True),
+   StructField("high", FloatType(), True),
+   StructField("low", FloatType(), True),
+   StructField("close", FloatType(), True),
+   StructField("adjclose", FloatType(), True),
+   StructField("volume", IntegerType(), True)])
 
 amazon_df = spark.read.csv("AMZN.csv", header=True, schema=schema)
-amazon_df = amazon_df.withColumn("StockCode", lit("AMZN"))
+amazon_df = amazon_df.withColumn("stockcode", lit("AMZN"))
 
 google_df = spark.read.csv("GOOG.csv", header=True, schema=schema)
-google_df = google_df.withColumn("StockCode", lit("GOOG"))
+google_df = google_df.withColumn("stockcode", lit("GOOG"))
 
 tesla_df = spark.read.csv("TSLA.csv", header=True, schema=schema)
-tesla_df = tesla_df.withColumn("StockCode", lit("TSLA"))
+tesla_df = tesla_df.withColumn("stockcode", lit("TSLA"))
 
 merged_df = amazon_df.union(google_df).union(tesla_df)
 merged_df.write.parquet("merged_stock_data.parquet", mode='overwrite')

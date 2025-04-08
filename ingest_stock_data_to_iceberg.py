@@ -11,21 +11,21 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 schema = StructType([
-   StructField("Date", StringType(), True),
-   StructField("Open", FloatType(), True),
-   StructField("High", FloatType(), True),
-   StructField("Low", FloatType(), True),
-   StructField("Close", FloatType(), True),
-   StructField("AdjClose", FloatType(), True),
-   StructField("Volume", IntegerType(), True),
-   StructField("StockCode", StringType(), True),])
+   StructField("date", StringType(), True),
+   StructField("open", FloatType(), True),
+   StructField("high", FloatType(), True),
+   StructField("low", FloatType(), True),
+   StructField("close", FloatType(), True),
+   StructField("adjclose", FloatType(), True),
+   StructField("volume", IntegerType(), True),
+   StructField("stockcode", StringType(), True),])
 
 df = spark.read.parquet("merged_stock_data.parquet", header=True, schema=schema)
 
 # 3. Write to Iceberg table partitioned by StockCode
 df.writeTo("iceberg_catalog.stock_db.stock_table") \
     .using("iceberg") \
-    .partitionedBy("StockCode") \
+    .partitionedBy("stockcode") \
     .createOrReplace()
 
-print("Data written to Iceberg partitioned by StockCode.")
+print("Data written to Iceberg partitioned by stockcode.")
