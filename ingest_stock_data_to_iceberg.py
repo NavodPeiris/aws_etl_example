@@ -22,10 +22,25 @@ schema = StructType([
 
 df = spark.read.parquet("merged_stock_data.parquet", header=True, schema=schema)
 
+# DDL to create an empty Iceberg table
+spark.sql("""
+CREATE TABLE IF NOT EXISTS iceberg_catalog.stock_db.stock_table (
+    date STRING,
+    open DOUBLE,
+    high DOUBLE,
+    low DOUBLE,
+    close DOUBLE,
+    adjclose DOUBLE,
+    volume INT,
+    stockcode STRING
+)
+USING ICEBERG
+PARTITIONED BY (stockcode)
+""")
+
 # 3. Write to Iceberg table partitioned by StockCode
 df.writeTo("iceberg_catalog.stock_db.stock_table") \
     .using("iceberg") \
-    .partitionedBy("stockcode") \
-    .createOrReplace()
+    .append()
 
 print("Data written to Iceberg partitioned by stockcode.")

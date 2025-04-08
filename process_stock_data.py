@@ -45,22 +45,29 @@ avg_close_price_per_year_amzn_df = get_avg_price_per_year(amazon_df, "AMZN")
 avg_close_price_per_year_google_df = get_avg_price_per_year(google_df, "GOOG")
 avg_close_price_per_year_tesla_df = get_avg_price_per_year(tesla_df, "TSLA")
 
+# DDL to create an empty Iceberg table
+spark.sql("""
+CREATE TABLE IF NOT EXISTS iceberg_catalog.stock_db.stock_processed_table (
+    year INT,
+    average_adj_close_price DOUBLE,
+    stockcode STRING
+)
+USING ICEBERG
+PARTITIONED BY (stockcode)
+""")
+
 # 3. Write to Iceberg table partitioned by StockCode
 avg_close_price_per_year_amzn_df.writeTo("iceberg_catalog.stock_db.stock_processed_table") \
     .using("iceberg") \
-    .partitionedBy("stockcode") \
-    .createOrReplace()
+    .append()
 
 avg_close_price_per_year_google_df.writeTo("iceberg_catalog.stock_db.stock_processed_table") \
     .using("iceberg") \
-    .partitionedBy("stockcode") \
-    .createOrReplace()
+    .append()
 
 avg_close_price_per_year_tesla_df.writeTo("iceberg_catalog.stock_db.stock_processed_table") \
     .using("iceberg") \
-    .partitionedBy("stockcode") \
-    .createOrReplace()
-
+    .append()
 
 end_time = time.time()
 elapsed_time = round(end_time - start_time, 2)
