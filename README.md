@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="architecture.png" />
+</p>
+
 #### setup mwaa
 - put 'emr_etl.py' file in dags folder in aws mwaa environment
 - create aws role with policy 'mwaa_custom_policy.json'
